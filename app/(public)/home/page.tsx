@@ -153,7 +153,7 @@ export default function HomePage() {
               <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/25">
                 <Sparkles className="h-5 w-5 text-white" />
               </div>
-              <span className="font-bold text-xl text-gray-900">Peach</span>
+              <span className="font-bold text-xl text-gray-900">AI SDR</span>
             </div>
 
             {/* Desktop Nav */}
@@ -430,7 +430,7 @@ export default function HomePage() {
               Frequently asked questions
             </h2>
             <p className="text-lg text-gray-600">
-              Everything you need to know about Peach AI SDR.
+              Everything you need to know about AI SDR.
             </p>
           </div>
 
@@ -473,7 +473,7 @@ export default function HomePage() {
                 Ready to transform your sales?
               </h2>
               <p className="text-lg text-white/80 mb-8">
-                Get in touch with our team to learn how Peach can help you close
+                Get in touch with our team to learn how AI SDR can help you close
                 more deals.
               </p>
 
@@ -523,7 +523,7 @@ export default function HomePage() {
               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center">
                 <Sparkles className="h-4 w-4 text-white" />
               </div>
-              <span className="font-semibold text-gray-900">Peach AI SDR</span>
+              <span className="font-semibold text-gray-900">AI SDR</span>
             </div>
 
             <div className="flex items-center gap-8 text-sm text-gray-600">
@@ -539,7 +539,7 @@ export default function HomePage() {
             </div>
 
             <p className="text-sm text-gray-500">
-              © 2024 Peach.Study. All rights reserved.
+              © 2024 AI SDR. All rights reserved.
             </p>
           </div>
         </div>

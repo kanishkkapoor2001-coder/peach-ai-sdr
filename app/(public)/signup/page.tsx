@@ -56,7 +56,7 @@ export default function SignupPage() {
           <div className="h-9 w-9 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
             <Sparkles className="h-5 w-5 text-white" />
           </div>
-          <span className="font-bold text-xl text-white">Peach</span>
+          <span className="font-bold text-xl text-white">AI SDR</span>
         </Link>
 
         <div className="max-w-md">
@@ -64,7 +64,7 @@ export default function SignupPage() {
             Start closing more deals with AI
           </h1>
           <p className="text-lg text-white/80 mb-8">
-            Join thousands of sales professionals who use Peach to automate
+            Join thousands of sales professionals who use AI SDR to automate
             their outreach and book more meetings.
           </p>
           <ul className="space-y-4">
@@ -80,7 +80,7 @@ export default function SignupPage() {
         </div>
 
         <p className="text-white/60 text-sm">
-          &copy; 2024 Peach.Study. All rights reserved.
+          &copy; 2024 AI SDR. All rights reserved.
         </p>
       </div>
 
@@ -92,7 +92,7 @@ export default function SignupPage() {
             <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/25">
               <Sparkles className="h-5 w-5 text-white" />
             </div>
-            <span className="font-bold text-xl text-gray-900">Peach</span>
+            <span className="font-bold text-xl text-gray-900">AI SDR</span>
           </Link>
         </div>
 

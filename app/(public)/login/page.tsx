@@ -165,7 +165,7 @@ export default function LoginPage() {
           <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/25">
             <Sparkles className="h-5 w-5 text-white" />
           </div>
-          <span className="font-bold text-xl text-gray-900">Peach</span>
+          <span className="font-bold text-xl text-gray-900">AI SDR</span>
         </Link>
       </div>
 
