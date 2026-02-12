@@ -147,6 +147,17 @@ export const workspaces = pgTable("workspaces", {
   defaultFromName: text("default_from_name"),
   defaultFromEmail: text("default_from_email"),
 
+  // API Keys (user provides their own)
+  geminiApiKey: text("gemini_api_key"),
+  anthropicApiKey: text("anthropic_api_key"),
+  openaiApiKey: text("openai_api_key"),
+
+  // Account type and usage limits
+  accountType: text("account_type").default("sample"), // "sample", "full"
+  usageLimitPerDay: integer("usage_limit_per_day").default(10), // AI calls per day for sample accounts
+  usageCountToday: integer("usage_count_today").default(0),
+  usageResetDate: text("usage_reset_date"), // YYYY-MM-DD format
+
   // Timestamps
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
