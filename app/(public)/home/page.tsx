@@ -301,23 +301,120 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Hero Image/Preview */}
+          {/* Hero Image/Preview - Mock Dashboard */}
           <div className="mt-16 relative">
             <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent z-10 pointer-events-none" />
             <div className="bg-gradient-to-br from-violet-500/5 to-indigo-500/5 rounded-3xl border border-gray-200 p-4 shadow-2xl shadow-violet-500/10">
               <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-                {/* Mock Dashboard Preview */}
-                <div className="h-[400px] sm:h-[500px] bg-gradient-to-br from-gray-50 to-white flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-xl shadow-violet-500/25">
-                      <Sparkles className="w-10 h-10 text-white" />
+                {/* Realistic Dashboard Preview */}
+                <div className="bg-gray-50">
+                  {/* Top Bar */}
+                  <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center">
+                        <Sparkles className="w-4 h-4 text-white" />
+                      </div>
+                      <span className="font-semibold text-gray-900">AI SDR</span>
                     </div>
-                    <p className="text-gray-500 font-medium">
-                      AI SDR Dashboard Preview
-                    </p>
-                    <p className="text-sm text-gray-400 mt-1">
-                      Your command center for AI-powered sales
-                    </p>
+                    <div className="flex items-center gap-4">
+                      <div className="w-32 h-8 bg-gray-100 rounded-lg" />
+                      <div className="w-8 h-8 bg-violet-100 rounded-full" />
+                    </div>
+                  </div>
+
+                  <div className="flex">
+                    {/* Sidebar */}
+                    <div className="w-48 bg-white border-r border-gray-200 p-4 hidden sm:block">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 px-3 py-2 bg-violet-50 rounded-lg">
+                          <div className="w-4 h-4 bg-violet-500 rounded" />
+                          <span className="text-sm font-medium text-violet-700">Dashboard</span>
+                        </div>
+                        <div className="flex items-center gap-2 px-3 py-2 text-gray-600">
+                          <div className="w-4 h-4 bg-gray-300 rounded" />
+                          <span className="text-sm">Campaigns</span>
+                        </div>
+                        <div className="flex items-center gap-2 px-3 py-2 text-gray-600">
+                          <div className="w-4 h-4 bg-gray-300 rounded" />
+                          <span className="text-sm">Leads</span>
+                        </div>
+                        <div className="flex items-center gap-2 px-3 py-2 text-gray-600">
+                          <div className="w-4 h-4 bg-gray-300 rounded" />
+                          <span className="text-sm">Sequences</span>
+                        </div>
+                        <div className="flex items-center gap-2 px-3 py-2 text-gray-600">
+                          <div className="w-4 h-4 bg-gray-300 rounded" />
+                          <span className="text-sm">Inbox</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Main Content */}
+                    <div className="flex-1 p-6">
+                      {/* Stats Row */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                        <div className="bg-white rounded-xl border border-gray-200 p-4">
+                          <p className="text-sm text-gray-500">Total Leads</p>
+                          <p className="text-2xl font-bold text-gray-900">2,847</p>
+                          <p className="text-xs text-emerald-600">+12% this week</p>
+                        </div>
+                        <div className="bg-white rounded-xl border border-gray-200 p-4">
+                          <p className="text-sm text-gray-500">Emails Sent</p>
+                          <p className="text-2xl font-bold text-gray-900">14,293</p>
+                          <p className="text-xs text-emerald-600">+8% this week</p>
+                        </div>
+                        <div className="bg-white rounded-xl border border-gray-200 p-4">
+                          <p className="text-sm text-gray-500">Reply Rate</p>
+                          <p className="text-2xl font-bold text-gray-900">24.8%</p>
+                          <p className="text-xs text-emerald-600">+3.2% this week</p>
+                        </div>
+                        <div className="bg-white rounded-xl border border-gray-200 p-4">
+                          <p className="text-sm text-gray-500">Meetings</p>
+                          <p className="text-2xl font-bold text-gray-900">47</p>
+                          <p className="text-xs text-emerald-600">+5 this week</p>
+                        </div>
+                      </div>
+
+                      {/* Campaign Preview */}
+                      <div className="bg-white rounded-xl border border-gray-200 p-4">
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="font-semibold text-gray-900">Active Campaigns</h3>
+                          <span className="text-sm text-violet-600 font-medium">View All</span>
+                        </div>
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center gap-3">
+                              <div className="w-2 h-2 bg-emerald-500 rounded-full" />
+                              <span className="text-sm font-medium">Q1 Enterprise Outreach</span>
+                            </div>
+                            <div className="flex items-center gap-4 text-sm text-gray-500">
+                              <span>1,234 leads</span>
+                              <span>32% reply rate</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center gap-3">
+                              <div className="w-2 h-2 bg-emerald-500 rounded-full" />
+                              <span className="text-sm font-medium">SaaS Decision Makers</span>
+                            </div>
+                            <div className="flex items-center gap-4 text-sm text-gray-500">
+                              <span>892 leads</span>
+                              <span>28% reply rate</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center gap-3">
+                              <div className="w-2 h-2 bg-amber-500 rounded-full" />
+                              <span className="text-sm font-medium">Series A Startups</span>
+                            </div>
+                            <div className="flex items-center gap-4 text-sm text-gray-500">
+                              <span>567 leads</span>
+                              <span>Draft</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
