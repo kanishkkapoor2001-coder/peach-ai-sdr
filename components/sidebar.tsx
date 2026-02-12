@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import {
   Users,
@@ -17,13 +18,14 @@ import {
   Globe,
   Zap,
   Target,
-  ShieldCheck,
   ChevronDown,
   Sparkles,
   BarChart3,
   BotMessageSquare,
   Lightbulb,
   Flame,
+  LogOut,
+  User,
 } from "lucide-react";
 
 const navigation = [
@@ -52,8 +54,11 @@ const settingsNavigation = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { data: session } = useSession();
   const [companyName, setCompanyName] = useState<string>("AI SDR");
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   useEffect(() => {
     // Fetch company name from API
@@ -77,6 +82,11 @@ export function Sidebar() {
   const isNavActive = (href: string) => {
     if (href === "/") return pathname === "/";
     return pathname.startsWith(href);
+  };
+
+  const handleSignOut = async () => {
+    await signOut({ redirect: false });
+    router.push("/login");
   };
 
   return (
@@ -186,18 +196,44 @@ export function Sidebar() {
         </div>
       </div>
 
-      {/* Upgrade Banner */}
-      <div className="p-3">
-        <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 p-4 text-white">
-          <div className="relative z-10">
-            <p className="font-semibold text-sm">Upgrade to Pro</p>
-            <p className="text-xs text-white/80 mt-1">Unlock unlimited campaigns & AI features</p>
-            <button className="mt-3 px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg text-xs font-semibold transition-colors">
-              Learn More
-            </button>
-          </div>
-          <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-xl" />
-          <div className="absolute -right-2 -top-2 w-16 h-16 bg-white/10 rounded-full blur-lg" />
+      {/* User Profile Section */}
+      <div className="border-t border-gray-200/80 p-3">
+        <div className="relative">
+          <button
+            onClick={() => setUserMenuOpen(!userMenuOpen)}
+            className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-xl hover:bg-gray-100 transition-all duration-200"
+          >
+            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-violet-400 to-indigo-500 flex items-center justify-center text-white text-sm font-semibold">
+              {session?.user?.name?.[0]?.toUpperCase() || session?.user?.email?.[0]?.toUpperCase() || <User className="h-4 w-4" />}
+            </div>
+            <div className="flex-1 text-left">
+              <p className="text-sm font-medium text-gray-900 truncate">
+                {session?.user?.name || session?.user?.email?.split("@")[0] || "User"}
+              </p>
+              <p className="text-xs text-gray-500 truncate">
+                {session?.user?.email || ""}
+              </p>
+            </div>
+            <ChevronDown
+              className={cn(
+                "h-4 w-4 text-gray-400 transition-transform duration-200",
+                userMenuOpen && "rotate-180"
+              )}
+            />
+          </button>
+
+          {/* User dropdown menu */}
+          {userMenuOpen && (
+            <div className="absolute bottom-full left-0 right-0 mb-1 bg-white rounded-xl shadow-lg border border-gray-200 py-1 z-50">
+              <button
+                onClick={handleSignOut}
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+                Sign out
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

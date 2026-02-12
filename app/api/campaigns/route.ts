@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { campaigns, leads, emailSequences } from "@/lib/db/schema";
-import { eq, desc, sql, inArray } from "drizzle-orm";
+import { campaigns, leads } from "@/lib/db/schema";
+import { eq, desc, sql, inArray, and } from "drizzle-orm";
+import { getCurrentWorkspaceId } from "@/lib/auth-helpers";
 
 // Helper to handle database errors
 function handleDbError(error: unknown) {
@@ -29,21 +30,33 @@ export async function GET(request: NextRequest) {
   const startTime = Date.now();
 
   try {
-    // Get all campaigns first
-    const allCampaigns = await db
-      .select()
-      .from(campaigns)
-      .orderBy(desc(campaigns.createdAt));
+    // Get current workspace
+    const workspaceId = await getCurrentWorkspaceId();
+
+    // Build query - filter by workspace if available
+    const allCampaigns = workspaceId
+      ? await db
+          .select()
+          .from(campaigns)
+          .where(eq(campaigns.workspaceId, workspaceId))
+          .orderBy(desc(campaigns.createdAt))
+      : await db
+          .select()
+          .from(campaigns)
+          .orderBy(desc(campaigns.createdAt));
 
     // Get actual lead counts for each campaign in one query
-    const leadCounts = await db
-      .select({
-        campaignId: leads.campaignId,
-        count: sql<number>`count(*)::int`,
-      })
-      .from(leads)
-      .where(sql`${leads.campaignId} IS NOT NULL`)
-      .groupBy(leads.campaignId);
+    const campaignIds = allCampaigns.map(c => c.id);
+    const leadCounts = campaignIds.length > 0
+      ? await db
+          .select({
+            campaignId: leads.campaignId,
+            count: sql<number>`count(*)::int`,
+          })
+          .from(leads)
+          .where(inArray(leads.campaignId, campaignIds))
+          .groupBy(leads.campaignId)
+      : [];
 
     // Create a map of campaignId -> lead count
     const leadCountMap = new Map<string, number>();
@@ -125,6 +138,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get current workspace
+    const workspaceId = await getCurrentWorkspaceId();
+
     const [campaign] = await db
       .insert(campaigns)
       .values({
@@ -135,6 +151,7 @@ export async function POST(request: NextRequest) {
         status: "draft",
         sequenceType: sequenceType || "ai",
         aiCriteria: aiCriteria || null,
+        workspaceId: workspaceId || null,
       })
       .returning();
 
@@ -155,6 +172,19 @@ export async function PATCH(request: NextRequest) {
         { error: "Campaign ID is required" },
         { status: 400 }
       );
+    }
+
+    // Verify user has access to this campaign's workspace
+    const workspaceId = await getCurrentWorkspaceId();
+    if (workspaceId) {
+      const [campaign] = await db
+        .select()
+        .from(campaigns)
+        .where(and(eq(campaigns.id, id), eq(campaigns.workspaceId, workspaceId)))
+        .limit(1);
+      if (!campaign) {
+        return NextResponse.json({ error: "Campaign not found" }, { status: 404 });
+      }
     }
 
     // Update campaign fields
@@ -209,6 +239,19 @@ export async function DELETE(request: NextRequest) {
         { error: "Campaign ID is required" },
         { status: 400 }
       );
+    }
+
+    // Verify user has access to this campaign's workspace
+    const workspaceId = await getCurrentWorkspaceId();
+    if (workspaceId) {
+      const [campaign] = await db
+        .select()
+        .from(campaigns)
+        .where(and(eq(campaigns.id, id), eq(campaigns.workspaceId, workspaceId)))
+        .limit(1);
+      if (!campaign) {
+        return NextResponse.json({ error: "Campaign not found" }, { status: 404 });
+      }
     }
 
     // Remove leads from campaign first

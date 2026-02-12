@@ -73,6 +73,62 @@ export const touchpointStatusEnum = pgEnum("touchpoint_status", [
 ]);
 
 // ============================================
+// USERS TABLE (for authentication)
+// ============================================
+export const users = pgTable("users", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+
+  email: text("email").notNull().unique(),
+  name: text("name"),
+  passwordHash: text("password_hash").notNull(),
+  image: text("image"),
+
+  // Email verification
+  emailVerified: timestamp("email_verified"),
+  verificationToken: text("verification_token"),
+
+  // Account settings
+  role: text("role").default("user"), // "user", "admin"
+
+  // Current workspace
+  currentWorkspaceId: text("current_workspace_id"),
+
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  lastLoginAt: timestamp("last_login_at"),
+}, (table) => [
+  index("users_email_idx").on(table.email),
+]);
+
+// ============================================
+// WORKSPACE MEMBERS TABLE (users in workspaces)
+// ============================================
+export const workspaceMembers = pgTable("workspace_members", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+
+  workspaceId: text("workspace_id")
+    .references(() => workspaces.id, { onDelete: "cascade" })
+    .notNull(),
+
+  userId: text("user_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+
+  role: text("role").default("member"), // "owner", "admin", "member"
+
+  // Timestamps
+  joinedAt: timestamp("joined_at").defaultNow(),
+}, (table) => [
+  index("workspace_members_workspace_id_idx").on(table.workspaceId),
+  index("workspace_members_user_id_idx").on(table.userId),
+]);
+
+// ============================================
 // WORKSPACES TABLE (for multi-tenancy)
 // ============================================
 export const workspaces = pgTable("workspaces", {
@@ -1058,6 +1114,25 @@ export const crmActivitiesRelations = relations(crmActivities, ({ one }) => ({
   }),
 }));
 
+export const usersRelations = relations(users, ({ many, one }) => ({
+  workspaceMembers: many(workspaceMembers),
+  currentWorkspace: one(workspaces, {
+    fields: [users.currentWorkspaceId],
+    references: [workspaces.id],
+  }),
+}));
+
+export const workspaceMembersRelations = relations(workspaceMembers, ({ one }) => ({
+  workspace: one(workspaces, {
+    fields: [workspaceMembers.workspaceId],
+    references: [workspaces.id],
+  }),
+  user: one(users, {
+    fields: [workspaceMembers.userId],
+    references: [users.id],
+  }),
+}));
+
 // ============================================
 // TYPES
 // ============================================
@@ -1114,3 +1189,9 @@ export type NewCrmActivity = typeof crmActivities.$inferInsert;
 
 export type CrmSetting = typeof crmSettings.$inferSelect;
 export type NewCrmSetting = typeof crmSettings.$inferInsert;
+
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+
+export type WorkspaceMember = typeof workspaceMembers.$inferSelect;
+export type NewWorkspaceMember = typeof workspaceMembers.$inferInsert;

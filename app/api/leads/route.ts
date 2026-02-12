@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db, leads, type NewLead } from "@/lib/db";
-import { eq, desc, sql, inArray } from "drizzle-orm";
+import { eq, desc, inArray, and } from "drizzle-orm";
+import { getCurrentWorkspaceId } from "@/lib/auth-helpers";
 
 // GET /api/leads - List all leads (with optional pagination for large datasets)
 export async function GET(request: NextRequest) {
@@ -11,23 +12,32 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "100");
     const offset = parseInt(searchParams.get("offset") || "0");
 
-    let query = db
-      .select()
-      .from(leads)
-      .orderBy(desc(leads.createdAt))
-      .limit(limit)
-      .offset(offset);
+    // Get current workspace
+    const workspaceId = await getCurrentWorkspaceId();
 
-    // Filter by status if provided
-    const allLeads = status
+    // Build where conditions
+    const conditions = [];
+    if (workspaceId) {
+      conditions.push(eq(leads.workspaceId, workspaceId));
+    }
+    if (status) {
+      conditions.push(eq(leads.status, status as any));
+    }
+
+    const allLeads = conditions.length > 0
       ? await db
           .select()
           .from(leads)
-          .where(eq(leads.status, status as any))
+          .where(and(...conditions))
           .orderBy(desc(leads.createdAt))
           .limit(limit)
           .offset(offset)
-      : await query;
+      : await db
+          .select()
+          .from(leads)
+          .orderBy(desc(leads.createdAt))
+          .limit(limit)
+          .offset(offset);
 
     const duration = Date.now() - startTime;
     console.log(`[API] GET /api/leads - ${allLeads.length} leads in ${duration}ms`);
@@ -46,6 +56,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+
+    // Get current workspace
+    const workspaceId = await getCurrentWorkspaceId();
 
     const newLead: NewLead = {
       firstName: body.firstName,
@@ -69,6 +82,7 @@ export async function POST(request: NextRequest) {
       strategicPriorities: body.strategicPriorities || [],
       researchSummary: body.researchSummary,
       status: "new",
+      workspaceId: workspaceId || null,
     };
 
     const [created] = await db.insert(leads).values(newLead).returning();
@@ -96,11 +110,20 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+    // Get current workspace
+    const workspaceId = await getCurrentWorkspaceId();
+
+    // Build where conditions - only update leads in user's workspace
+    const conditions = [inArray(leads.id, ids)];
+    if (workspaceId) {
+      conditions.push(eq(leads.workspaceId, workspaceId));
+    }
+
     // OPTIMIZED: Single query with inArray instead of looping
     const results = await db
       .update(leads)
       .set({ ...updates, updatedAt: new Date() })
-      .where(inArray(leads.id, ids))
+      .where(and(...conditions))
       .returning();
 
     return NextResponse.json({ leads: results });
@@ -135,10 +158,19 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
+    // Get current workspace
+    const workspaceId = await getCurrentWorkspaceId();
+
+    // Build where conditions - only delete leads in user's workspace
+    const conditions = [inArray(leads.id, ids)];
+    if (workspaceId) {
+      conditions.push(eq(leads.workspaceId, workspaceId));
+    }
+
     // Delete leads (this will cascade delete related sequences due to FK constraints)
     const deleted = await db
       .delete(leads)
-      .where(inArray(leads.id, ids))
+      .where(and(...conditions))
       .returning({ id: leads.id });
 
     console.log(`[API] DELETE /api/leads - Deleted ${deleted.length} leads`);
