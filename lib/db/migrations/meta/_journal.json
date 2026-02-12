@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1770472011623,
+      "tag": "0000_unusual_slipstream",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1770577606644,
+      "tag": "0001_petite_risque",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1770629655840,
+      "tag": "0002_add-cancelled-touchpoint-status",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1770640490803,
+      "tag": "0003_panoramic_kronos",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1770805529565,
+      "tag": "0004_empty_william_stryker",
+      "breakpoints": true
+    }
+  ]
+}
